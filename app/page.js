@@ -21,6 +21,8 @@ const db = getFirestore(app);
 export default function PortfolioPage() {
   // Theme state
   const [theme, setTheme] = useState('light');
+  // Mobile menu state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Portfolio items data
   const portfolioItems = [
@@ -85,6 +87,11 @@ export default function PortfolioPage() {
     setTheme(savedTheme);
     document.documentElement.classList.toggle('dark', savedTheme === 'dark');
   }, []);
+
+  // Close mobile menu when clicking on a link
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   // Fetch comments and ratings from Firestore
   useEffect(() => {
@@ -218,7 +225,28 @@ export default function PortfolioPage() {
       <nav className={`sticky top-0 z-10 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
         <div className="container mx-auto px-6 py-3 flex justify-between items-center">
           <div className="text-xl font-bold">MyPortfolio</div>
-          <div className="flex space-x-4">
+          
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`p-2 rounded-md ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-200'}`}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
+          
+          {/* Desktop menu */}
+          <div className="hidden md:flex space-x-4">
             <a href="#home" className="hover:text-blue-500 transition">Home</a>
             <a href="#about" className="hover:text-blue-500 transition">About</a>
             <a href="#portfolio" className="hover:text-blue-500 transition">Portfolio</a>
@@ -226,15 +254,28 @@ export default function PortfolioPage() {
             <a href="#feedback" className="hover:text-blue-500 transition">Feedback</a>
           </div>
         </div>
+        
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className={`md:hidden ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
+            <div className="container mx-auto px-6 py-2 flex flex-col space-y-2">
+              <a href="#home" onClick={closeMobileMenu} className="py-2 hover:text-blue-500 transition">Home</a>
+              <a href="#about" onClick={closeMobileMenu} className="py-2 hover:text-blue-500 transition">About</a>
+              <a href="#portfolio" onClick={closeMobileMenu} className="py-2 hover:text-blue-500 transition">Portfolio</a>
+              <a href="#contact" onClick={closeMobileMenu} className="py-2 hover:text-blue-500 transition">Contact</a>
+              <a href="#feedback" onClick={closeMobileMenu} className="py-2 hover:text-blue-500 transition">Feedback</a>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-8">
         {/* Basic CV Section */}
         <section id="home" className="mb-16">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="w-full md:w-1/3 flex justify-center">
-              <div className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-blue-500 shadow-lg">
+              <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-blue-500 shadow-lg">
                 <img 
                   src="profile.jpg" 
                   alt="Profile" 
@@ -243,13 +284,13 @@ export default function PortfolioPage() {
               </div>
             </div>
             <div className="w-full md:w-2/3">
-              <h1 className="text-4xl font-bold mb-4">Shendy Pratama Solihin</h1>
-              <h2 className="text-2xl text-blue-500 mb-4">Information System Student</h2>
-              <p className="mb-4">
+              <h1 className="text-3xl md:text-4xl font-bold mb-4">Shendy Pratama Solihin</h1>
+              <h2 className="text-xl md:text-2xl text-blue-500 mb-4">Information System Student</h2>
+              <p className="mb-4 text-sm md:text-base">
                 Passionate about web development and design. Currently pursuing my Bachelor's degree 
                 in Information System with a focus on front-end technologies and user experience.
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold">Education</h3>
                   <p>B.Sc. Computer Science</p>
@@ -267,31 +308,31 @@ export default function PortfolioPage() {
 
         {/* Portfolio Timeline Section */}
         <section id="portfolio" className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">My Portfolio</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">My Portfolio</h2>
           
           {!activeItem ? (
             <div className="relative">
               {/* Timeline line */}
-              <div className={`absolute left-1/2 h-full w-1 ${theme === 'dark' ? 'bg-blue-400' : 'bg-blue-500'} transform -translate-x-1/2`}></div>
+              <div className={`absolute left-4 sm:left-1/2 h-full w-1 ${theme === 'dark' ? 'bg-blue-400' : 'bg-blue-500'} sm:transform sm:-translate-x-1/2`}></div>
               
               {/* Timeline items */}
-              <div className="space-y-8">
+              <div className="space-y-8 pl-8 sm:pl-0">
                 {portfolioItems.map((item, index) => (
                   <div 
                     key={item.id}
-                    className={`relative flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
+                    className={`relative`}
                     initial="hidden"
                     animate="visible"
                     variants={containerVariants}
                   >
                     <div 
-                      className={`w-full md:w-1/2 p-6 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} transition-all duration-300 hover:scale-105 cursor-pointer`}
+                      className={`w-full p-6 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} transition-all duration-300 hover:scale-[1.02] cursor-pointer`}
                       onClick={() => setActiveItem(item)}
                       variants={itemVariants}
                     >
                       <div className="flex items-center mb-2">
-                        <div className={`w-4 h-4 rounded-full ${theme === 'dark' ? 'bg-blue-400' : 'bg-blue-500'} absolute left-1/2 transform -translate-x-1/2`}></div>
-                        <h3 className="text-xl font-bold ml-6">{item.title}</h3>
+                        <div className={`w-4 h-4 rounded-full ${theme === 'dark' ? 'bg-blue-400' : 'bg-blue-500'} absolute left-0 sm:left-1/2 transform -translate-x-1/2`}></div>
+                        <h3 className="text-xl font-bold ml-4">{item.title}</h3>
                       </div>
                       <div className={`text-sm ${theme === 'dark' ? 'text-blue-300' : 'text-blue-600'} mb-2`}>{item.date}</div>
                       <p className="mb-2">{item.description}</p>
@@ -311,21 +352,21 @@ export default function PortfolioPage() {
               </div>
             </div>
           ) : (
-            <div className={`p-8 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className={`p-6 sm:p-8 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
               <button 
                 onClick={() => setActiveItem(null)}
                 className={`px-4 py-2 rounded-lg mb-4 ${theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'}`}
               >
                 ← Back to Portfolio
               </button>
-              <h2 className="text-3xl font-bold mb-2">{activeItem.title}</h2>
-              <div className={`text-lg ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'} mb-4`}>{activeItem.date}</div>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2">{activeItem.title}</h2>
+              <div className={`text-base sm:text-lg ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'} mb-4`}>{activeItem.date}</div>
               <p className="mb-6">{activeItem.fullDescription}</p>
               <div className="flex flex-wrap gap-2 mb-6">
                 {activeItem.tags.map(tag => (
                   <span 
                     key={tag} 
-                    className={`px-3 py-1 rounded-full ${theme === 'dark' ? 'bg-gray-700 text-blue-300' : 'bg-blue-100 text-blue-800'}`}
+                    className={`px-3 py-1 rounded-full text-sm ${theme === 'dark' ? 'bg-gray-700 text-blue-300' : 'bg-blue-100 text-blue-800'}`}
                   >
                     {tag}
                   </span>
@@ -346,8 +387,8 @@ export default function PortfolioPage() {
 
         {/* Contact Section */}
         <section id="contact" className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Get In Touch</h2>
-          <div className={`max-w-2xl mx-auto p-8 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">Get In Touch</h2>
+          <div className={`max-w-2xl mx-auto p-6 sm:p-8 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
             <form>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -395,12 +436,12 @@ export default function PortfolioPage() {
 
         {/* Feedback Section */}
         <section id="feedback" className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Feedback & Ratings</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">Feedback & Ratings</h2>
           
           {/* Rating Section */}
-          <div className={`max-w-2xl mx-auto p-8 rounded-lg shadow-lg mb-8 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold">Rate My Portfolio</h3>
+          <div className={`max-w-2xl mx-auto p-6 sm:p-8 rounded-lg shadow-lg mb-8 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold mb-2 sm:mb-0">Rate My Portfolio</h3>
               <div className="flex items-center">
                 <span className="text-2xl font-bold mr-2">{averageRating}</span>
                 <div className="flex">
@@ -421,10 +462,10 @@ export default function PortfolioPage() {
                     </svg>
                   ))}
                 </div>
+                <span className={`text-sm ml-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  ({totalRatings} {totalRatings === 1 ? 'vote' : 'votes'})
+                </span>
               </div>
-              <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                ({totalRatings} {totalRatings === 1 ? 'vote' : 'votes'})
-              </span>
             </div>
 
             {/* Comment Form */}
@@ -472,7 +513,7 @@ export default function PortfolioPage() {
                       key={comment.id} 
                       className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}
                     >
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2">
                         <h4 className="font-semibold">{comment.name}</h4>
                         <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                           {new Date(comment.timestamp?.toDate()).toLocaleString()}
@@ -517,8 +558,9 @@ export default function PortfolioPage() {
         )}
       </button>
 
-      {/* Chatbot */}
-      <div className={`fixed bottom-4 right-4 transition-all duration-300 ${chatOpen ? 'w-80 h-96' : 'w-16 h-16'}`}>
+      {/* Chatbot - Responsive sizing */}
+      <div className={`fixed bottom-4 right-4 transition-all duration-300 ${chatOpen ? 'w-full sm:w-80 h-96' : 'w-16 h-16'}`}
+        style={{ maxWidth: chatOpen ? 'calc(100% - 2rem)' : 'none' }}>
         {chatOpen ? (
           <div className={`relative w-full h-full rounded-lg shadow-xl flex flex-col ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="flex justify-between items-center p-3 border-b">
